@@ -10,7 +10,6 @@ from flask import Flask
 from flask import request, jsonify
 from two1.bitserv.flask import Payment
 from two1.wallet.two1_wallet import Wallet
-from werkzeug import exceptions
 import requests
 
 
@@ -94,25 +93,25 @@ def standard_ping():
     try:
         hostname = request.args['uri'].replace('https://', '').replace('http://', '')
     except KeyError:
-        raise exceptions.BadRequest("Host query parameter is missing from your request.")
+        return "Host query parameter is missing from your request.", 400
 
     if not hostname:
-        raise exceptions.BadRequest("Host query parameter is missing from your request.")
+        return "Host query parameter is missing from your request.", 400
 
     # disallow private addresses
     try:
         if ipaddress.ip_address(hostname).is_private:
-            raise exceptions.Forbidden("Private IP scanning is forbidden")
+            return "Private IP scanning is forbidden", 403
     except ValueError:  # raised when hostname isn't an ip address
         if not is_valid_hostname(hostname):
-            raise exceptions.Forbidden("Invalid hostname.")
+            return "Hostname does not resolve.", 400
 
     # call ping
     args = ['ping', '-c', str(app.config['PING21_DEFAULT_ECHO']), hostname]
     try:
         out = subprocess.check_output(args, universal_newlines=True)
     except subprocess.CalledProcessError:
-        raise exceptions.InternalServerError("An error occured while performing ping on host={}".format(hostname))
+        return "Host was not reachable", 400
 
     # format, jsonify, and return
     return jsonify(**{
