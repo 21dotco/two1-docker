@@ -1,5 +1,6 @@
 import os
 import base64
+import binascii
 
 import two1
 from two1.commands.util.config import Config
@@ -8,6 +9,10 @@ from two1.wallet.two1_wallet import Two1Wallet
 from two1.blockchain import TwentyOneProvider
 from two1.wallet.daemonizer import get_daemonizer
 from two1.server import rest_client as _rest_client
+
+
+def base642str(base64):
+    return binascii.unhexlify(base64.encode('ascii')).decode('utf-8')
 
 
 def login_21():
@@ -37,7 +42,7 @@ def login_21():
     machine_auth = machine_auth_wallet.MachineAuthWallet(wallet)
 
     username = os.environ["TWO1_USERNAME"]
-    password = os.environ["TWO1_PASSWORD"]
+    password = base642str(os.environ["TWO1_PASSWORD"])
 
     rest_client = _rest_client.TwentyOneRestClient(two1.TWO1_HOST, machine_auth, username)
 
