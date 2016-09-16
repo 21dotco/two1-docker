@@ -11,8 +11,12 @@ from two1.wallet.daemonizer import get_daemonizer
 from two1.server import rest_client as _rest_client
 
 
-def base642str(base64):
-    return binascii.unhexlify(base64.encode('ascii')).decode('utf-8')
+def hex2str(hex):
+    """
+    Encodes the hex string with ascii, unhexlifies it, then decodes it as utf-8. Inverse of str2hex. Used to
+    decode arbitrary password from ascii hex.
+    """
+    return binascii.unhexlify(hex.encode('ascii')).decode('utf-8')
 
 
 def login_21():
@@ -42,7 +46,7 @@ def login_21():
     machine_auth = machine_auth_wallet.MachineAuthWallet(wallet)
 
     username = os.environ["TWO1_USERNAME"]
-    password = base642str(os.environ["TWO1_PASSWORD"])
+    password = hex2str(os.environ["TWO1_PASSWORD"])
 
     rest_client = _rest_client.TwentyOneRestClient(two1.TWO1_HOST, machine_auth, username)
 
