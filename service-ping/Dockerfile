@@ -1,8 +1,13 @@
 FROM 21dotco/two1:base
 MAINTAINER 21.co
 
-ADD . /usr/src/app
-
 RUN apk add --no-cache linux-headers
-RUN pip3 install -r /usr/src/app/requirements.txt
-CMD sh -c "python3 /usr/src/app/utils/login.py && sleep 2 && python3 /usr/src/app/utils/update_manifest.py && sleep 2 && python3 /usr/src/app/server.py"
+
+WORKDIR /usr/src/app
+COPY . ./
+
+RUN pip3 install -e . -U
+
+COPY ping-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/ping-entrypoint.sh
+ENTRYPOINT ["ping-entrypoint.sh"]
