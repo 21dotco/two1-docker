@@ -6,23 +6,12 @@ from two1.commands.util.config import Config
 from two1.server import machine_auth_wallet
 from two1.wallet.two1_wallet import Two1Wallet
 from two1.blockchain import TwentyOneProvider
-from two1.wallet.daemonizer import get_daemonizer
 from two1.server import rest_client as _rest_client
 
 
 def login_21():
     """ Restore wallet to disk and log in to 21.
     """
-
-    d = None
-    try:
-        d = get_daemonizer()
-    except OSError:
-        pass
-
-    if d:
-        d.stop()
-
     mnemonic = os.environ["TWO1_WALLET_MNEMONIC"]
 
     provider = TwentyOneProvider()
